@@ -46,7 +46,7 @@ struct WorkspaceCommand: Command {
         : Workspace.all.filter { $0.workspaceMonitor.rect.topLeftCorner == currentMonitor.rect.topLeftCorner }
             .toSet()
             .union([current])
-            .sorted()
+            .sorted(by: >)
     let index = workspaces.firstIndex(where: { $0 == target.workspace }) ?? 0
     let workspace: Workspace? = if wrapAround {
         workspaces.get(wrappingIndex: isNext ? index + 1 : index - 1)

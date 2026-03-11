@@ -44,7 +44,7 @@ final class Workspace: TreeNode, NonLeafTreeNodeObject, Hashable, Comparable {
     }
 
     @MainActor static var all: [Workspace] {
-        workspaceNameToWorkspace.values.sorted()
+        workspaceNameToWorkspace.values.sorted(by: >)
     }
 
     @MainActor static func get(byName name: String) -> Workspace {
