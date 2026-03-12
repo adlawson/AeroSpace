@@ -1,3 +1,4 @@
+import AppKit
 import Common
 import Foundation
 import SwiftUI
@@ -42,6 +43,24 @@ struct MenuBarLabel: View {
         return HStack(spacing: hStackSpacing) {
             let style = style ?? viewModel.experimentalUISettings.displayStyle
             switch style {
+                case .adlawsonCustom:
+                    let items = viewModel.workspaces.filter {
+                        config.persistentWorkspaces.contains($0.name) || !$0.isEffectivelyEmpty || $0.isVisible
+                    }
+                    let isCurrentFullscreen = items.first { $0.isFocused }?.hasFullscreenWindows ?? false
+                    let cornerRadius = itemCornerRadius * 2
+                    let borderWidth = itemBorderSize - 1
+                    let row = HStack(spacing: hStackSpacing) {
+                        ForEach(items, id: \.name) { item in
+                            adlawsonCustomItem(for: item, isFullscreen: isCurrentFullscreen, cornerRadius: cornerRadius, borderWidth: borderWidth)
+                        }
+                    }
+                    if isCurrentFullscreen {
+                        adlawsonCustomFill(cornerRadius: cornerRadius) { row }
+                    } else {
+                        row
+                    }
+
                 case .monospacedText: getText(for: .monospaced)
                 case .systemText: getText(for: .default)
                 case .squares: squares
@@ -74,8 +93,47 @@ struct MenuBarLabel: View {
 
     private func getText(for design: Font.Design) -> some View {
         Text(viewModel.trayText)
-            .font(.system(.largeTitle, design: design))
+            .font(.system(.title, design: design))
             .foregroundStyle(finalColor)
+    }
+
+    private func adlawsonCustomText(for item: WorkspaceViewModel) -> some View {
+        let side = itemSize - 8 // local square size for this style only, independent of the shared itemSize
+        let fontSize = NSFont.preferredFont(forTextStyle: .title1).pointSize - 4 // 4px smaller than the .title text style
+        return Text(item.name)
+            .font(.system(size: fontSize, design: .default))
+            .frame(width: side, height: side)
+    }
+
+    @ViewBuilder
+    private func adlawsonCustomItem(for item: WorkspaceViewModel, isFullscreen: Bool, cornerRadius: CGFloat, borderWidth: CGFloat) -> some View {
+        if isFullscreen {
+            // No per-item decoration during fullscreen - the whole row gets one shared fill instead.
+            adlawsonCustomText(for: item)
+                .foregroundStyle(finalColor)
+        } else if item.isFocused {
+            adlawsonCustomFill(cornerRadius: cornerRadius) { adlawsonCustomText(for: item) }
+        } else {
+            adlawsonCustomText(for: item)
+                .overlay {
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .strokeBorder(finalColor, style: StrokeStyle(lineWidth: borderWidth))
+                }
+                .foregroundStyle(finalColor)
+        }
+    }
+
+    @ViewBuilder
+    private func adlawsonCustomFill<Content: View>(cornerRadius: CGFloat, @ViewBuilder content: () -> Content) -> some View {
+        let shape = content()
+        ZStack {
+            shape.background {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            }
+            shape.blendMode(.destinationOut)
+        }
+        .compositingGroup()
+        .foregroundStyle(finalColor)
     }
 
     private var squares: some View {
