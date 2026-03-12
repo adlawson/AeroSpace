@@ -2,7 +2,7 @@
 cd "$(dirname "$0")/.."
 source ./script/setup.sh
 
-if ! test -z "$(git status --porcelain)"; then
+if ! test -z "$(git status --porcelain -uno)"; then
     echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     echo !!! Uncommitted files detected !!!
     echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -1,5 +1,6 @@
 /.idea
 /.debug
+/.direnv
 /.release
 /.shell-completion
 /.site
