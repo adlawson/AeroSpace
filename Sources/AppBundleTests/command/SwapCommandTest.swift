@@ -15,25 +15,25 @@ final class SwapCommandTest: XCTestCase {
             TestWindow.new(id: 3, parent: $0)
         }
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .direction(.right))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.direction(.right)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(3), .window(2)]),
                                .window(1)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .direction(.left))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.direction(.left)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(1), .window(2)]),
                                .window(3)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .direction(.down))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.direction(.down)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(2), .window(1)]),
                                .window(3)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .direction(.up))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.direction(.up)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(1), .window(2)]),
                                .window(3)]))
@@ -49,25 +49,25 @@ final class SwapCommandTest: XCTestCase {
             TestWindow.new(id: 3, parent: $0)
         }
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .dfsRelative(.dfsNext))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.dfsRelative(.dfsNext)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(2), .window(1)]),
                                .window(3)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .dfsRelative(.dfsNext))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.dfsRelative(.dfsNext)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(2), .window(3)]),
                                .window(1)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .dfsRelative(.dfsPrev))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.dfsRelative(.dfsPrev)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(2), .window(1)]),
                                .window(3)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .dfsRelative(.dfsPrev))).run(.defaultEnv, .emptyStdin)
+        try await SwapCommand(args: SwapCmdArgs(rawArgs: [], target: .relative(.dfsRelative(.dfsPrev)))).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription,
                      .h_tiles([.v_tiles([.window(1), .window(2)]),
                                .window(3)]))
@@ -81,13 +81,13 @@ final class SwapCommandTest: XCTestCase {
             TestWindow.new(id: 3, parent: $0)
         }
 
-        var args = SwapCmdArgs(rawArgs: [], target: .direction(.left))
+        var args = SwapCmdArgs(rawArgs: [], target: .relative(.direction(.left)))
         args.wrapAround = true
         try await SwapCommand(args: args).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription, .h_tiles([.window(3), .window(2), .window(1)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        args.target = .initialized(.direction(.right))
+        args.target = .initialized(.relative(.direction(.right)))
         try await SwapCommand(args: args).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription, .h_tiles([.window(1), .window(2), .window(3)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
@@ -100,13 +100,13 @@ final class SwapCommandTest: XCTestCase {
             TestWindow.new(id: 3, parent: $0)
         }
 
-        var args = SwapCmdArgs(rawArgs: [], target: .dfsRelative(.dfsPrev))
+        var args = SwapCmdArgs(rawArgs: [], target: .relative(.dfsRelative(.dfsPrev)))
         args.wrapAround = true
         try await SwapCommand(args: args).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription, .h_tiles([.window(3), .window(2), .window(1)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
 
-        args.target = .initialized(.dfsRelative(.dfsNext))
+        args.target = .initialized(.relative(.dfsRelative(.dfsNext)))
         try await SwapCommand(args: args).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription, .h_tiles([.window(1), .window(2), .window(3)]))
         assertEquals(focus.windowOrNil?.windowId, 1)
@@ -119,7 +119,7 @@ final class SwapCommandTest: XCTestCase {
             TestWindow.new(id: 3, parent: $0)
         }
 
-        var args = SwapCmdArgs(rawArgs: [], target: .direction(.right))
+        var args = SwapCmdArgs(rawArgs: [], target: .relative(.direction(.right)))
         args.swapFocus = true
         try await SwapCommand(args: args).run(.defaultEnv, .emptyStdin)
         assertEquals(root.layoutDescription, .h_tiles([.window(1), .window(3), .window(2)]))

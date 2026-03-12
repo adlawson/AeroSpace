@@ -16,30 +16,39 @@ struct SwapCommand: Command {
 
         let targetWindow: Window?
         switch args.target.val {
-            case .direction(let direction):
-                if let (parent, ownIndex) = currentWindow.closestParent(hasChildrenInDirection: direction, withLayout: nil) {
-                    targetWindow = parent.children[ownIndex + direction.focusOffset].findLeafWindowRecursive(snappedTo: direction.opposite)
-                } else if args.wrapAround {
-                    targetWindow = target.workspace.findLeafWindowRecursive(snappedTo: direction.opposite)
-                } else {
-                    return false
-                }
-            case .dfsRelative(let nextPrev):
+            case .direct(let targetWindowId):
                 let windows = target.workspace.rootTilingContainer.allLeafWindowsRecursive
-                guard let currentIndex = windows.firstIndex(where: { $0 == target.windowOrNil }) else {
+                guard let validWindow = windows.first(where: { $0.windowId == targetWindowId.raw }) else {
                     return false
                 }
-                var targetIndex = switch nextPrev {
-                    case .dfsNext: currentIndex + 1
-                    case .dfsPrev: currentIndex - 1
+                targetWindow = validWindow
+            case .relative(let relative):
+                switch relative {
+                    case .direction(let direction):
+                        if let (parent, ownIndex) = currentWindow.closestParent(hasChildrenInDirection: direction, withLayout: nil) {
+                            targetWindow = parent.children[ownIndex + direction.focusOffset].findLeafWindowRecursive(snappedTo: direction.opposite)
+                        } else if args.wrapAround {
+                            targetWindow = target.workspace.findLeafWindowRecursive(snappedTo: direction.opposite)
+                        } else {
+                            return false
+                        }
+                    case .dfsRelative(let nextPrev):
+                        let windows = target.workspace.rootTilingContainer.allLeafWindowsRecursive
+                        guard let currentIndex = windows.firstIndex(where: { $0 == target.windowOrNil }) else {
+                            return false
+                        }
+                        var targetIndex = switch nextPrev {
+                            case .dfsNext: currentIndex + 1
+                            case .dfsPrev: currentIndex - 1
+                        }
+                        if !(0 ..< windows.count).contains(targetIndex) {
+                            if !args.wrapAround {
+                                return false
+                            }
+                            targetIndex = (targetIndex + windows.count) % windows.count
+                        }
+                        targetWindow = windows[targetIndex]
                 }
-                if !(0 ..< windows.count).contains(targetIndex) {
-                    if !args.wrapAround {
-                        return false
-                    }
-                    targetIndex = (targetIndex + windows.count) % windows.count
-                }
-                targetWindow = windows[targetIndex]
         }
 
         guard let targetWindow else {
