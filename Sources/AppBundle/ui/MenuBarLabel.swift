@@ -42,6 +42,21 @@ struct MenuBarLabel: View {
         return HStack(spacing: hStackSpacing) {
             let style = style ?? viewModel.experimentalUISettings.displayStyle
             switch style {
+                case .adlawsonCustom:
+                    let text = getText(for: .default)
+                    let workspace = viewModel.trayItems.first { $0.type == .workspace && $0.isActive }
+                    if let workspace, workspace.hasFullscreenWindows {
+                        text
+                            .padding(.horizontal, hStackSpacing * 2)
+                            .padding(.vertical, 2)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: itemCornerRadius * 2, style: .continuous)
+                                    .strokeBorder(finalColor, style: StrokeStyle(lineWidth: 2))
+                            }
+                    } else {
+                        text
+                    }
+
                 case .monospacedText: getText(for: .monospaced)
                 case .systemText: getText(for: .default)
                 case .squares: squares
@@ -74,7 +89,7 @@ struct MenuBarLabel: View {
 
     private func getText(for design: Font.Design) -> some View {
         Text(viewModel.trayText)
-            .font(.system(.largeTitle, design: design))
+            .font(.system(.title, design: design))
             .foregroundStyle(finalColor)
     }
 

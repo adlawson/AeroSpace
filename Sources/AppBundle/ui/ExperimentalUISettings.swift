@@ -19,6 +19,7 @@ struct ExperimentalUISettings {
 enum MenuBarStyle: String, CaseIterable, Identifiable, Equatable, Hashable {
     case monospacedText
     case systemText
+    case adlawsonCustom
     case squares
     case i3
     case i3Ordered
@@ -27,6 +28,7 @@ enum MenuBarStyle: String, CaseIterable, Identifiable, Equatable, Hashable {
         switch self {
             case .monospacedText: "Monospaced font"
             case .systemText: "System font"
+            case .adlawsonCustom: "Andrew's custom"
             case .squares: "Square images"
             case .i3: "i3 style grouped"
             case .i3Ordered: "i3 style ordered"
