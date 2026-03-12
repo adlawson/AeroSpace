@@ -10,7 +10,8 @@ include::util/man-attributes.adoc[]
 [verse]
 // tag::synopsis[]
 aerospace swap [-h|--help] [--window-id <window-id>] [--swap-focus]
-               [--wrap-around] (left|down|up|right|dfs-next|dfs-prev)
+               [--wrap-around]
+               (left|down|up|right|dfs-next|dfs-prev|<window-id>)
 
 // end::synopsis[]
 
@@ -45,6 +46,9 @@ Swaps the focused window with the nearest window in the given direction.
 
 (dfs-next|dfs-prev)::
 Swaps the focused window with the next or previous window in the depth-first order (top-to-bottom and left-to-right) of windows in the current workspace tree.
+
+<window-id>::
+Swaps the focused window with the window with the given window ID.
 
 // end::body[]
 
