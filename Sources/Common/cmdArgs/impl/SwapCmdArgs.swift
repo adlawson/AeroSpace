@@ -23,7 +23,7 @@ func parseSwapCmdArgs(_ args: StrArrSlice) -> ParsedCmd<SwapCmdArgs> {
 
 public enum SwapTarget: Equatable, Sendable {
     case relative(CardinalOrDfsDirection)
-    case direct(WindowId)
+    case direct(OpaqueWindowId)
 
     static let argsUnion: String = "(left|down|up|right|dfs-next|dfs-prev|<window-id>)"
 }
@@ -36,6 +36,6 @@ func parseSwapTarget(i: PosArgParserInput) -> ParsedCliArgs<SwapTarget> {
         case "right": .succ(.relative(.direction(.right)), advanceBy: 1)
         case "dfs-next": .succ(.relative(.dfsNextPrev(.dfsNext)), advanceBy: 1)
         case "dfs-prev": .succ(.relative(.dfsNextPrev(.dfsPrev)), advanceBy: 1)
-        default: .init(WindowId.parse(i.arg).map(SwapTarget.direct), advanceBy: 1)
+        default: .init(parseWindowId(i.arg).map(SwapTarget.direct), advanceBy: 1)
     }
 }

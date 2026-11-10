@@ -18,7 +18,7 @@ struct SwapCommand: Command {
         switch args.target.val {
             case .direct(let targetWindowId):
                 let windows = target.workspace.rootTilingContainer.allInhabitedLeafWindowsRecursive
-                guard let validWindow = windows.first(where: { $0.windowId == targetWindowId.raw }) else {
+                guard let validWindow = windows.first(where: { $0.windowId == targetWindowId }) else {
                     return .fail
                 }
                 targetWindow = validWindow
